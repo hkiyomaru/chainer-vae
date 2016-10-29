@@ -26,6 +26,22 @@ class ArgumentParser:
             type=int,
             help='Input GPUID you\'d like to use'
         )
+        self.parser.add_argument(
+            '--batchsize',
+            action='store',
+            dest='batchsize',
+            default=100,
+            type=int,
+            help='Input minibatch size'
+        )
+        self.parser.add_argument(
+            '--dims',
+            action='store',
+            dest='dims',
+            default=100,
+            type=int,
+            help='Input dimention of encoded vector'
+        )
 
     def parse_argument(self):
         self.args = vars(self.parser.parse_args())
