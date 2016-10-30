@@ -14,7 +14,7 @@ class ArgumentParser:
             '--epoch',
             action='store',
             dest='epoch',
-            default=500,
+            default=50,
             type=int,
             help='Input epoch number'
         )
@@ -38,7 +38,7 @@ class ArgumentParser:
             '--dims',
             action='store',
             dest='dims',
-            default=100,
+            default=64,
             type=int,
             help='Input dimention of encoded vector'
         )
