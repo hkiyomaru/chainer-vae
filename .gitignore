@@ -30,4 +30,4 @@ source/data/
 source/out_models/
 
 # data file
-.pkl
+*.pkl
