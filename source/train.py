@@ -118,13 +118,13 @@ def train(model, epoch0=0):
         logger.epoch_end()
 
     logger.terminate()
-    serializer.save(model, optimizer, epoch)
+    serializer.save(model, optimizer, epoch+1)
 
     # everything works well
     return 0
 
 def main():
-    vae = VAE(n_in=1, n_latent=n_latent, n_h=512)
+    vae = VAE(n_in=1, n_latent=n_latent, n_h=64)
     if gpuid >= 0: vae.to_gpu()
     return train(vae)
 
