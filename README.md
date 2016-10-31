@@ -37,9 +37,13 @@ $ python train.py
 
 This script has some options.
 
-* --gpuid: Specify GPUID. If you only have CPU, -1 works well.
+* --gpuid: Specify GPUID.
 * --epoch: Number of epoch.
 * --batchsize: Number of mini-batch size.
 * --dims: Number of dimentions of encoded vector.
 
 ## Test
+
+```
+$ python classifier.py
+```
