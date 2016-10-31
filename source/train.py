@@ -7,8 +7,6 @@ from chainer import Variable
 from chainer import optimizers
 import chainer.functions as F
 from chainer.functions.loss.vae import gaussian_kl_divergence
-from chainer import training
-from chainer.training import extensions
 
 from utils.ArgumentParser import ArgumentParser
 from utils.Logger import Logger
@@ -40,7 +38,6 @@ batchsize = parser.get_argument('batchsize')
 logger = Logger(n_epoch)
 serializer = Serializer(out_model_dir)
 computational_graph_generator = ComputationalGraph('cg')
-
 
 """
 Data loading
@@ -78,7 +75,7 @@ except:
 Show information
 """
 logger.show_information(gpuid, n_latent, batchsize, n_epoch)
-logger.show_dataset_information(x_train, y_train)
+logger.show_dataset_information(x_train, x_test)
 logger.ok()
 
 
@@ -94,30 +91,29 @@ def train(model, epoch0=0):
         for i in xrange(0, N_train, batchsize):
             x = Variable(xp.asarray(x_train[perm[i:i + batchsize]]))
             mu, ln_var = model.encode(x)
-            C = 1.0
-            k = 1
             rec_loss = 0
-            for l in xrange(k):
+            for l in xrange(1):
                 z = F.gaussian(mu, ln_var)
-                rec_loss += F.bernoulli_nll(x, model.decode(z, sigmoid=False)) / (k * batchsize)
-            loss = rec_loss + C * gaussian_kl_divergence(mu, ln_var) / batchsize
+                rec_loss += F.bernoulli_nll(x, model.decode(z, sigmoid=False)) / batchsize
+            reg_loss = gaussian_kl_divergence(mu, ln_var) / batchsize
+            loss = rec_loss + reg_loss
             optimizer.zero_grads()
             loss.backward()
+            loss.unchain_backward()
             optimizer.update()
-            logger.save_loss(loss.data, rec_loss.data, train=True)
+            logger.save_loss(reg_loss.data, rec_loss.data, train=True)
 
         # evaluation
         for i in xrange(0, N_test, batchsize):
             x = Variable(xp.asarray(x_train[i:i + batchsize]), volatile='on')
             mu, ln_var = model.encode(x)
-            C = 1.0
-            k = 10
             rec_loss = 0
-            for l in xrange(k):
+            for l in xrange(1):
                 z = F.gaussian(mu, ln_var)
-                rec_loss += F.bernoulli_nll(x, model.decode(z, sigmoid=False)) / (k * batchsize)
-            loss = rec_loss + C * gaussian_kl_divergence(mu, ln_var) / batchsize
-            logger.save_loss(loss.data, rec_loss.data, train=False)
+                rec_loss += F.bernoulli_nll(x, model.decode(z, sigmoid=False)) / batchsize
+            reg_loss = gaussian_kl_divergence(mu, ln_var) / batchsize
+            loss = rec_loss + reg_loss
+            logger.save_loss(reg_loss.data, rec_loss.data, train=False)
 
         logger.epoch_end()
 
