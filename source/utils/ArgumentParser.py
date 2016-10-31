@@ -22,7 +22,7 @@ class ArgumentParser:
             '--gpuid',
             action='store',
             dest='gpuid',
-            default=0,
+            default=-1,
             type=int,
             help='Input GPUID you\'d like to use'
         )
@@ -38,7 +38,7 @@ class ArgumentParser:
             '--dims',
             action='store',
             dest='dims',
-            default=64,
+            default=1,
             type=int,
             help='Input dimention of encoded vector'
         )
