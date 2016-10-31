@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 
 import sys
@@ -12,7 +13,6 @@ class Logger:
         self.current_rec_loss = [0, 0]
 
     def prepare_graph(self):
-        self.x = range(self.n_epoch)
         self.y_train = np.zeros(self.n_epoch)
         self.y_test = np.zeros(self.n_epoch)
         self.rec_y_train = np.zeros(self.n_epoch)
@@ -63,19 +63,18 @@ class Logger:
         print "# mean loss:", self.epoch_loss[1]
         print "# mean reconstruction loss:", self.epoch_rec_loss[1]
 
-
     def terminate(self):
         print "\nDONE."
         self.show_loss_graph()
 
     def show_loss_graph(self):
-        plt.title("Loss value transition")
-        plt.plot(self.x, self.y_train)
-        plt.plot(self.x, self.y_test)
-        plt.plot(self.x, self.rec_y_train)
-        plt.plot(self.x, self.rec_y_test)
+        y = np.asarray([self.y_train, self.y_test, self.rec_y_train, self.rec_y_test])
+        y = y.T
+        df = pd.DataFrame(y, columns=['y_train', 'y_test', 'rec_t_train', 'rec_y_test'])
+        df.plot(title='loss value transition')
         plt.show()
 
     def handler(self, signum, frame):
+        print "Keyboard interrupt."
         self.show_loss_graph()
         sys.exit(1)
